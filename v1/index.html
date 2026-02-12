@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Age Group Calculator</title>
+
+<style>
+:root {
+  --primary: #2c7be5;
+  --secondary: #1a68d1;
+  --text-color: #333;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+}
+
+.widget {
+  padding: 20px;
+  max-width: 420px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+h2 {
+  margin-top: 0;
+  color: var(--primary);
+}
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+}
+
+input {
+  border: 1px solid #ccc;
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: var(--secondary);
+}
+
+.result {
+  margin-top: 15px;
+  font-weight: bold;
+  color: var(--text-color);
+}
+</style>
+</head>
+
+<body>
+  <div class="widget">
+    <h2 id="widgetTitle">Youth Soccer Age Group</h2>
+    <label for="birthdate">Enter Birthdate:</label>
+    <input type="date" id="birthdate" />
+    <button onclick="calculateAgeGroup()">Calculate</button>
+    <div class="result" id="result"></div>
+  </div>
+
+<script>
+// ================================
+// 1️⃣ Read Query Parameters
+// ================================
+
+const params = new URLSearchParams(window.location.search);
+
+const primary = params.get("primary");
+const secondary = params.get("secondary");
+const seasonOverride = params.get("season");
+const customTitle = params.get("title");
+
+// ================================
+// 2️⃣ Apply Branding
+// ================================
+
+function isValidHex(color) {
+  return /^[0-9A-Fa-f]{6}$/.test(color);
+}
+
+if (primary && isValidHex(primary)) {
+  document.documentElement.style.setProperty("--primary", "#" + primary);
+}
+
+if (secondary && isValidHex(secondary)) {
+  document.documentElement.style.setProperty("--secondary", "#" + secondary);
+}
+
+if (customTitle) {
+  document.getElementById("widgetTitle").innerText =
+    decodeURIComponent(customTitle);
+}
+
+// ================================
+// 3️⃣ Age Group Logic
+// ================================
+
+function calculateAgeGroup() {
+  const input = document.getElementById("birthdate").value;
+  const resultDiv = document.getElementById("result");
+
+  if (!input) {
+    resultDiv.innerText = "Please select a birthdate.";
+    return;
+  }
+
+  const birthDate = new Date(input);
+  const today = new Date();
+
+  let seasonYear;
+
+  if (seasonOverride && !isNaN(seasonOverride)) {
+    seasonYear = parseInt(seasonOverride);
+  } else {
+    const currentYear = today.getFullYear();
+    seasonYear = (today.getMonth() + 1) >= 8
+      ? currentYear
+      : currentYear - 1;
+  }
+
+  const cutoffDate = new Date(seasonYear, 7, 1); // Aug 1
+  let age = seasonYear - birthDate.getFullYear();
+
+  const birthdayThisSeason = new Date(
+    seasonYear,
+    birthDate.getMonth(),
+    birthDate.getDate()
+  );
+
+  if (birthdayThisSeason > cutoffDate) {
+    age--;
+  }
+
+  resultDiv.innerText = `Age Group: U${age}`;
+}
+</script>
+
+</body>
+</html>
