@@ -12,6 +12,7 @@
 
 :root {
   --primary: #2c7be5;
+  --primary-rgb: 10, 95, 255;
   --secondary: #1a68d1;
   --text-color: #333;
 }
@@ -19,7 +20,7 @@
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f5f5f5;
+  background: transparent;
   display: flex;
   justify-content: center;
   padding: 20px;
@@ -30,8 +31,10 @@ body {
   max-width: 420px;
   background: white;
   border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  padding: 28px;
+   box-shadow:
+    0 4px 13px rgba(var(--primary-rgb), 0.16),
+    0px 4px 13px rgba(var(--primary-rgb), 0.16);
+  padding: 22px;
 
   display: flex;
   flex-direction: column;
@@ -71,11 +74,11 @@ button {
   cursor: pointer;
   transition: background 0.2s ease;
 }
-
+/*
 button:hover {
   background: var(--secondary);
 }
-
+*/
 .result {
   min-height: 60px;
   display: flex;
@@ -86,8 +89,8 @@ button:hover {
 .age-badge {
   background: linear-gradient(
     to bottom right,
-    var(--primary),
-    #000000
+    var(--secondary),
+    var(--primary)
   );
   color: white;
   font-size: 28px;
@@ -122,9 +125,12 @@ button:hover {
 // ================================
 
 const params = new URLSearchParams(window.location.search);
+console.log("params = %s\n", params);
 
 const primary = params.get("primary");
+console.log("Primary: %s\n", primary);
 const secondary = params.get("secondary");
+console.log("Secondary: %s\n", secondary);
 const seasonOverride = params.get("season");
 const customTitle = params.get("title");
 
@@ -138,10 +144,14 @@ function isValidHex(color) {
 
 if (primary && isValidHex(primary)) {
   document.documentElement.style.setProperty("--primary", "#" + primary);
+  document.documentElement.style.setProperty("--primary-rgb", hexToRgb(primary));
 }
 
 if (secondary && isValidHex(secondary)) {
   document.documentElement.style.setProperty("--secondary", "#" + secondary);
+}
+else {
+  console.log("Selling bad\n");
 }
 
 if (customTitle) {
@@ -195,6 +205,23 @@ function calculateAgeGroup() {
     document.getElementById("badge").classList.add("show");
   }, 50);
 }
+
+function hexToRgb(hex) {
+  hex = hex.replace("#", "");
+
+  if (hex.length === 3) {
+    hex = hex.split("").map(c => c + c).join("");
+  }
+
+  const bigint = parseInt(hex, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+
+  return `${r}, ${g}, ${b}`;
+}
+
+const primaryRGB = hexToRgb(primary);
 </script>
 
 </body>
