@@ -44,14 +44,22 @@ body {
   text-align: center; /* centers text */
 }
 
-h2 {
+h2, h4 {
   margin: 0;
   color: var(--primary);
+}
+
+h4 {
+  opacity: 0.7;
+  margin-top: -12px;
+  margin-bottom: 6px;
 }
 
 label {
   font-size: 14px;
   color: var(--text-color);
+  margin-bottom: -4px;
+  margin-top: 6px;
 }
 
 input, button {
@@ -141,6 +149,7 @@ button:active {
 <body>
   <div class="widget">
     <h2 id="widgetTitle">Age Group Calculator</h2>
+    <h4 id="widgetDesc">2026/27 Season</h4>
     <label for="birthdate">Enter your player's birthdate:</label>
     <input type="date" id="birthdate" />
     <button onclick="calculateAgeGroup()">Calculate</button>
@@ -195,14 +204,16 @@ function calculateAgeGroup() {
   const input = document.getElementById("birthdate").value;
   const [inputYear, inputMonth, inputDay] = input.split("-");
   const resultDiv = document.getElementById("result");
+  const today = new Date();
+  console.log("\n\nfullyear: %s\n", today.getFullYear());
 
-  if (!input) {
-    resultDiv.innerText = "Please select a birthdate.";
+  if (!input || (inputYear > today.getFullYear()) || (inputYear <= 1900)) {
+    resultDiv.innerText = "Please select a valid birthdate.";
     return;
   }
   console.log(input);
   const birthDate = new Date(inputYear, inputMonth - 1, inputDay);
-  const today = new Date();
+  
   console.log("Today: %s\nBirthDate: %s\n", today, birthDate)
 
   let seasonYear;
