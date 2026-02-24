@@ -72,15 +72,22 @@ button {
   color: white;
   border: none;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: 
+    filter 0.2s ease,
+    transform 0.12s ease-out;
 }
-/*
+
 button:hover {
-  background: var(--secondary);
+  filter: brightness(0.9);
 }
-*/
+
+button:active {
+  transform: scale(0.96);
+}
+
 .result {
   min-height: 60px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -95,17 +102,34 @@ button:hover {
   color: white;
   font-size: 28px;
   font-weight: 700;
-  padding: 14px 28px;
-  border-radius: 50px;
+  border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   opacity: 0;
   transform: scale(0.8);
   transition: all 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 130px;
 }
 
 .age-badge.show {
   opacity: 1;
   transform: scale(1);
+}
+
+.age-label {
+  font-size: 18px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.age-value {
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.1;
 }
 </style>
 </head>
@@ -121,7 +145,7 @@ button:hover {
 
 <script>
 // ================================
-// 1️⃣ Read Query Parameters
+// Read Query Parameters
 // ================================
 
 const params = new URLSearchParams(window.location.search);
@@ -199,8 +223,12 @@ function calculateAgeGroup() {
     age--;
   }
 
-  resultDiv.innerHTML = `<div class="age-badge" id="badge">Age Group: U${age}</div>`;
-
+  resultDiv.innerHTML = `
+    <div class="age-badge" id="badge">
+      <div class="age-label">Age Group</div>
+      <div class="age-value">U${age}</div>
+    </div>
+  `;
   setTimeout(() => {
     document.getElementById("badge").classList.add("show");
   }, 50);
